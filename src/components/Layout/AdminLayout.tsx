@@ -1,41 +1,140 @@
-import { Outlet, useNavigate } from 'react-router-dom'
-import { Layout, Menu } from 'antd'
+import { useEffect, useMemo, useState } from 'react'
+import { Avatar, Button, Dropdown, Layout, Menu, Tooltip } from 'antd'
 import {
+  AppstoreOutlined,
+  BarChartOutlined,
   DashboardOutlined,
-  PlaySquareOutlined,
-  FileTextOutlined,
+  FileSearchOutlined,
+  FolderOpenOutlined,
+  LogoutOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  SafetyCertificateOutlined,
   SettingOutlined,
+  UserOutlined,
 } from '@ant-design/icons'
-import { useState } from 'react'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import logo from '@/assets/img/teriteri-pink.png'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { logoutAdmin } from '@/store/slices/userSlice'
 
-const { Sider, Content } = Layout
+const { Header, Sider, Content } = Layout
 
 export default function AdminLayout() {
   const navigate = useNavigate()
-  const [collapsed, setCollapsed] = useState(false)
+  const location = useLocation()
+  const dispatch = useAppDispatch()
+  const user = useAppSelector((state) => state.user.current)
+  const [collapsed, setCollapsed] = useState(window.innerWidth < 1000)
 
-  const menuItems = [
-    { key: '/', icon: <DashboardOutlined />, label: '工作台' },
-    { key: '/review/video', icon: <PlaySquareOutlined />, label: '视频审核' },
-    { key: '/content/carousel', icon: <FileTextOutlined />, label: '内容管理' },
-    { key: '/system/user', icon: <SettingOutlined />, label: '系统管理' },
-  ]
+  useEffect(() => {
+    const resize = () => {
+      if (window.innerWidth < 760) setCollapsed(true)
+    }
+    window.addEventListener('resize', resize)
+    return () => window.removeEventListener('resize', resize)
+  }, [])
+
+  const menuItems = useMemo(
+    () => [
+      { key: '/home', icon: <DashboardOutlined />, label: '工作台' },
+      { key: '/data', icon: <BarChartOutlined />, label: '数据中心' },
+      {
+        key: '/content',
+        icon: <AppstoreOutlined />,
+        label: '内容管理',
+        children: [
+          { key: '/content/carousel', label: '轮播管理' },
+          { key: '/content/hot-search', label: '热搜管理' },
+          { key: '/content/ranking', label: '排行管理' },
+          { key: '/content/tag', label: '标签管理' },
+        ],
+      },
+      {
+        key: '/review',
+        icon: <FileSearchOutlined />,
+        label: '内容审核',
+        children: [
+          { key: '/review/video/form', label: '视频审核' },
+          { key: '/review/article', label: '专栏审核' },
+          { key: '/review/avatar', label: '头像审核' },
+          { key: '/review/dynamic', label: '动态审核' },
+          { key: '/review/comment', label: '评论审核' },
+          { key: '/review/danmu', label: '弹幕审核' },
+        ],
+      },
+      {
+        key: '/case',
+        icon: <FolderOpenOutlined />,
+        label: '案件中心',
+        children: [
+          { key: '/case/report', label: '举报处理' },
+          { key: '/case/appeal', label: '申诉处理' },
+        ],
+      },
+      {
+        key: '/system',
+        icon: <SettingOutlined />,
+        label: '系统管理',
+        children: [
+          { key: '/system/user', icon: <UserOutlined />, label: '用户管理' },
+          { key: '/system/role', icon: <SafetyCertificateOutlined />, label: '角色管理' },
+        ],
+      },
+    ],
+    [],
+  )
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed}>
-        <div className="p-4 text-white text-center font-bold">
-          {collapsed ? 'TF' : 'Teriteri Admin'}
-        </div>
+    <Layout className="admin-layout">
+      <Sider
+        className="admin-sider"
+        width={256}
+        collapsedWidth={76}
+        collapsed={collapsed}
+        trigger={null}
+        theme="light"
+      >
+        <button className="admin-logo" type="button" onClick={() => navigate('/home')}>
+          <img src={logo} alt="teriteri" />
+        </button>
         <Menu
-          theme="dark"
           mode="inline"
+          selectedKeys={[location.pathname]}
+          defaultOpenKeys={['/content', '/review', '/case', '/system']}
           items={menuItems}
           onClick={({ key }) => navigate(key)}
         />
       </Sider>
-      <Layout>
-        <Content className="m-4 p-6 bg-white rounded-lg">
+      <Layout className="admin-main-layout">
+        <Header className="admin-header">
+          <Tooltip title={collapsed ? '展开菜单' : '收起菜单'}>
+            <Button
+              type="text"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setCollapsed((value) => !value)}
+            />
+          </Tooltip>
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: 'logout',
+                  icon: <LogoutOutlined />,
+                  danger: true,
+                  label: '退出登录',
+                  onClick: () => dispatch(logoutAdmin()).then(() => navigate('/login')),
+                },
+              ],
+            }}
+          >
+            <button className="admin-user" type="button">
+              <Avatar src={user?.avatar} icon={<UserOutlined />} />
+              <span>{user?.nickname || '管理员'}</span>
+            </button>
+          </Dropdown>
+        </Header>
+        <Content className="admin-content">
           <Outlet />
         </Content>
       </Layout>
