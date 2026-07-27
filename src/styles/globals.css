@@ -69,6 +69,11 @@ button, input, textarea { font: inherit; }
 .admin-page-heading p { margin: 0; color: var(--text3); }
 .metric-card { border: 0; box-shadow: 0 4px 16px rgb(0 0 0 / 4%); }
 .dashboard-table { margin-top: 20px; border: 0; box-shadow: 0 4px 16px rgb(0 0 0 / 4%); }
+.dashboard-sections { margin-top: 2px; }
+.dashboard-sections .dashboard-table { height: calc(100% - 20px); }
+.dashboard-actions { display: grid; gap: 12px; }
+.dashboard-actions .ant-btn { justify-content: flex-start; height: 42px; }
+.dashboard-health { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--text2); }
 .review-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding: 14px 16px; border-radius: 10px; background: #fff; }
 .review-toolbar > span { color: var(--text3); }
 .review-user { display: inline-flex; align-items: center; gap: 8px; }
@@ -82,6 +87,62 @@ button, input, textarea { font: inherit; }
 .review-author span { margin-top: 4px; color: var(--text3); font-size: 12px; }
 .review-description { margin: 0; white-space: pre-wrap; line-height: 1.65; }
 .generic-admin-empty { display: grid; min-height: 560px; place-items: center; border-radius: 12px; background: #fff; }
+
+.management-toolbar {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) 160px 160px auto auto;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #fff;
+}
+.management-toolbar > span:last-child { justify-self: end; color: var(--text3); white-space: nowrap; }
+.management-toolbar--search-only { grid-template-columns: minmax(260px, 520px) 1fr; }
+.table-user-copy { display: grid; gap: 2px; }
+.table-user-copy strong { font-weight: 600; }
+.table-user-copy small, .muted-block { color: var(--text3); font-size: 12px; }
+.muted-block { display: block; margin-top: 3px; }
+.content-cell { margin: 0 !important; }
+.danmu-content {
+  display: inline-block;
+  max-width: 250px;
+  padding: 5px 9px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: #25262b;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 55%);
+  white-space: nowrap;
+}
+.full-width { width: 100%; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.hot-rank { color: #f5222d; font-size: 16px; }
+
+.trend-chart {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  height: 220px;
+  gap: 12px;
+  align-items: end;
+  padding: 8px 4px 0;
+}
+.trend-chart__item { display: grid; min-width: 0; justify-items: center; gap: 5px; }
+.trend-chart__bars { display: flex; height: 150px; align-items: end; gap: 5px; }
+.trend-chart__bar { display: block; width: 11px; min-height: 4px; border-radius: 5px 5px 2px 2px; transition: height .3s ease; }
+.trend-chart__bar--users { background: #fb7299; }
+.trend-chart__bar--videos { background: #1677ff; }
+.trend-chart__item strong { font-size: 13px; }
+.trend-chart__item small { color: var(--text3); }
+.chart-legend { display: flex; justify-content: center; gap: 22px; margin-top: 12px; color: var(--text2); font-size: 13px; }
+.chart-legend span { display: inline-flex; align-items: center; gap: 7px; }
+.chart-legend i { width: 9px; height: 9px; border-radius: 50%; }
+.legend-users { background: #fb7299; }
+.legend-videos { background: #1677ff; }
+.category-distribution { display: grid; gap: 12px; }
+.category-distribution > div > span { display: block; margin-bottom: 4px; color: var(--text2); font-size: 13px; }
+.category-distribution .ant-progress { margin: 0; }
 
 .admin-login {
   position: relative;
@@ -116,7 +177,15 @@ button, input, textarea { font: inherit; }
   .admin-sider:not(.ant-layout-sider-collapsed) { transform: translateX(0); }
   .admin-main-layout, .admin-sider.ant-layout-sider-collapsed + .admin-main-layout { margin-left: 0; }
   .admin-content { padding: 18px 12px; }
+  .admin-content .ant-table-content { overflow-x: auto; }
   .admin-user span { display: none; }
   .review-toolbar { overflow-x: auto; gap: 20px; }
+  .management-toolbar, .management-toolbar--search-only {
+    grid-template-columns: 1fr;
+  }
+  .management-toolbar > span:last-child { justify-self: start; }
+  .form-grid { grid-template-columns: 1fr; gap: 0; }
+  .trend-chart { gap: 5px; }
+  .trend-chart__bar { width: 8px; }
   .admin-login__panel { padding: 28px 22px; }
 }

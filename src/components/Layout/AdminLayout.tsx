@@ -5,7 +5,6 @@ import {
   BarChartOutlined,
   DashboardOutlined,
   FileSearchOutlined,
-  FolderOpenOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -44,10 +43,8 @@ export default function AdminLayout() {
         icon: <AppstoreOutlined />,
         label: '内容管理',
         children: [
-          { key: '/content/carousel', label: '轮播管理' },
           { key: '/content/hot-search', label: '热搜管理' },
-          { key: '/content/ranking', label: '排行管理' },
-          { key: '/content/tag', label: '标签管理' },
+          { key: '/content/tag', label: '分区与标签' },
         ],
       },
       {
@@ -56,20 +53,8 @@ export default function AdminLayout() {
         label: '内容审核',
         children: [
           { key: '/review/video/form', label: '视频审核' },
-          { key: '/review/article', label: '专栏审核' },
-          { key: '/review/avatar', label: '头像审核' },
-          { key: '/review/dynamic', label: '动态审核' },
           { key: '/review/comment', label: '评论审核' },
           { key: '/review/danmu', label: '弹幕审核' },
-        ],
-      },
-      {
-        key: '/case',
-        icon: <FolderOpenOutlined />,
-        label: '案件中心',
-        children: [
-          { key: '/case/report', label: '举报处理' },
-          { key: '/case/appeal', label: '申诉处理' },
         ],
       },
       {
@@ -101,7 +86,7 @@ export default function AdminLayout() {
         <Menu
           mode="inline"
           selectedKeys={[location.pathname]}
-          defaultOpenKeys={['/content', '/review', '/case', '/system']}
+          defaultOpenKeys={['/content', '/review', '/system']}
           items={menuItems}
           onClick={({ key }) => navigate(key)}
         />
@@ -129,7 +114,7 @@ export default function AdminLayout() {
             }}
           >
             <button className="admin-user" type="button">
-              <Avatar src={user?.avatar} icon={<UserOutlined />} />
+              <Avatar src={user?.avatar || user?.avatar_url} icon={<UserOutlined />} />
               <span>{user?.nickname || '管理员'}</span>
             </button>
           </Dropdown>

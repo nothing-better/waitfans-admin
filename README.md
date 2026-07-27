@@ -169,3 +169,21 @@ Invoke-RestMethod http://127.0.0.1:8788/api/category/getall
 ### 构建成功但生产预览接口失败
 
 `npm run preview` 不使用开发服务器中的 `/api` 代理。生产部署必须由网关转发 `/api`，或在构建前设置正确的 `VITE_API_BASE_URL`。
+
+## 9. 已知问题
+
+### 🟡 占位数据
+
+| # | 位置 | 说明 |
+|---|------|------|
+| 1 | `pages/GenericPage.tsx:4-19` | 轮播管理、排行管理、专栏审核、头像审核、动态审核、评论审核、弹幕审核、举报处理、申诉处理、用户管理、角色管理等 14 个路由映射到占位页面，显示"暂无数据" |
+| 2 | `pages/Dashboard.tsx:113-122` | 审核流程表格数据硬编码 |
+| 3 | `components/Layout/AdminLayout.tsx:37-71` | 侧边栏菜单 label 全部硬编码 |
+
+### 🟢 接口不匹配
+
+| # | 问题 | 文件 |
+|---|------|------|
+| 1 | `PageResult<T>` 结构（`items`/`total`/`page`/`pageSize`）与用户端版本不同 | `api/management.ts` |
+| 2 | `request.ts:25` 硬编码比较 `'您不是管理员，无权访问'` 字符串，后端消息变更会导致判断失效 | `api/request.ts` |
+| 3 | 空 catch 块在 `pages/Login.tsx:24` | 应至少加 `console.error` |
