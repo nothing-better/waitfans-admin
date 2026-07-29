@@ -2,10 +2,70 @@
 
 Waitfans 管理端是独立的 React 18、TypeScript、Vite 5 仓库，用于管理员登录、内容审核和系统管理。它只通过 HTTP API 访问 `waitfans-backend`。
 
+> **开发前必读**：所有 AI 和开发者必须遵守 [AGENTS.md](AGENTS.md)。任何文件改动都必须验证并创建 Git 提交后才能结束任务。
+
+## 0. 从干净环境启动
+
+以下步骤适用于 Windows PowerShell。
+
+如果用户端、管理端和后端位于同一个 `waitfans` 父目录，最简单的方式是在父目录执行 `.\start-all.ps1`；首次运行使用 `.\start-all.ps1 -Bootstrap`。
+
+1. 按 `../waitfans-backend/README.md` 的“从干净环境启动”完成后端初始化和启动。
+2. 确认后端可访问：
+
+```powershell
+(Invoke-RestMethod http://127.0.0.1:7070/category/getall).code
+```
+
+3. 安装锁定版本并启动管理端：
+
+```powershell
+npm ci
+npm run dev -- --host 127.0.0.1 --port 8788 --strictPort
+```
+
+4. 打开 `http://127.0.0.1:8788/`，验证 Vite 代理：
+
+```powershell
+(Invoke-RestMethod http://127.0.0.1:8788/api/category/getall).code
+```
+
+预期输出 `200`。
+
+全新数据库没有预置管理员。先在 `http://127.0.0.1:8787/` 注册用户，然后进入后端目录查看本地数据库连接信息：
+
+```powershell
+Set-Location ..\waitfans-backend
+Get-Content .env.local | Select-String '^WAITFANS_DB_'
+```
+
+使用 `.env.local` 中的账号、密码和端口连接 MySQL。例如默认安装路径：
+
+```powershell
+& 'C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe' `
+  -h 127.0.0.1 -P 3307 -u waitfans_app -p waitfans
+```
+
+输入 `.env.local` 中的 `WAITFANS_DB_PASSWORD`，再执行：
+
+```sql
+UPDATE user
+SET role = 2, nickname = '管理员'
+WHERE username = '刚注册的用户名';
+```
+
+退出用户端旧会话，然后使用该账号登录管理端。`role=1` 是管理员，`role=2` 是超级管理员。
+
+日常启动时无需重复 `npm ci`：
+
+```powershell
+npm run dev -- --host 127.0.0.1 --port 8788 --strictPort
+```
+
 ## 1. 运行要求
 
-- Node.js 20 或更高版本（本次验证使用 Node.js 24）
-- npm 10 或更高版本（本次验证使用 npm 11）
+- Node.js 20 或更高版本（Node.js 22 已验证）
+- npm 10 或更高版本（npm 10 已验证）
 - Waitfans 后端已启动并监听 `http://127.0.0.1:7070`
 - 用于完整验收的测试管理员账号
 
@@ -52,7 +112,7 @@ VITE_API_BASE_URL=http://localhost:7070
 先启动后端，再执行：
 
 ```powershell
-npm run dev
+npm run dev -- --host 127.0.0.1 --port 8788 --strictPort
 ```
 
 默认访问地址：
@@ -61,7 +121,7 @@ npm run dev
 http://127.0.0.1:8788/
 ```
 
-需要固定监听地址和端口时可执行：
+等价的 Vite 直接启动命令：
 
 ```powershell
 .\node_modules\.bin\vite.cmd --host=127.0.0.1 --port=8788 --strictPort
