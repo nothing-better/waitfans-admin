@@ -71,6 +71,10 @@ npm run dev -- --host 127.0.0.1 --port 8788 --strictPort
 
 用户端、管理端和后端分别是独立 Git 仓库。管理端接口、权限或审核流程发生变化时，应在同一次联调中同步检查后端 Controller、Service、鉴权规则和返回结构。
 
+仓库的 `.nvmrc` 固定推荐使用已验证的 Node.js 22.23.1，`package.json` 声明了
+最低版本要求，npm 安装时会提示不兼容的工具链。使用 nvm-windows 时可执行
+`nvm use 22.23.1`。
+
 ## 2. 安装依赖
 
 在本仓库根目录执行：
@@ -87,9 +91,9 @@ npm ci
 
 ## 3. 环境配置
 
-本地开发推荐不创建 `.env.local`。管理端会使用 `/api` 相对路径，由 Vite 转发至 `http://localhost:7070`。
+本地开发推荐不创建 `.env.local`。管理端会使用 `/api` 相对路径，由 Vite 转发至 `http://127.0.0.1:7070`。
 
-如需直接访问后端：
+如需显式保存本机配置：
 
 ```powershell
 Copy-Item .env.example .env.local
@@ -98,12 +102,13 @@ Copy-Item .env.example .env.local
 默认配置：
 
 ```dotenv
-VITE_API_BASE_URL=http://localhost:7070
+VITE_API_BASE_URL=/api
 ```
 
 注意：
 
-- 不要在地址末尾追加 `/api`。
+- `/api` 使用 Vite 开发代理；若改为直接访问后端，应填写
+  `http://127.0.0.1:7070`，不要再追加 `/api`。
 - `.env.local` 不应提交到 Git。
 - 修改环境变量后必须重启 Vite。
 
