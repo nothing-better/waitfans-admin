@@ -3,6 +3,7 @@ import { Avatar, Button, Descriptions, Empty, Modal, Space, Spin, Tag, message }
 import { CheckOutlined, CloseOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getReviewVideo, updateReviewStatus, type ReviewVideo } from '@/api/review'
+import { getVideoPlaybackUrl } from '@/utils/media'
 
 const statusTags = [
   ['processing', '正在审核'],
@@ -58,7 +59,7 @@ export default function VideoReviewDetail() {
       </div>
       <div className="review-detail-grid">
         <section>
-          <video src={data.video.videoUrl} poster={data.video.coverUrl} controls />
+          <video src={getVideoPlaybackUrl(data.video.vid)} poster={data.video.coverUrl} controls />
           <Space wrap className="review-actions">
             <Button type="primary" icon={<CheckOutlined />} onClick={() => updateStatus(1)}>通过审核</Button>
             <Button icon={<CloseOutlined />} onClick={() => updateStatus(2)}>打回整改</Button>
